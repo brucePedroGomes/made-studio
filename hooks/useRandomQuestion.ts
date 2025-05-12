@@ -2,10 +2,15 @@ import { useState, useEffect } from 'react';
 import questionsData from '../questions.json';
 import { QandA } from '../types';
 
-const useRandomQuestion = (): QandA | null => {
+const useRandomQuestion = (): {
+  question: QandA | null;
+  isLoading: boolean;
+} => {
   const [randomQuestion, setRandomQuestion] = useState<QandA | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     if (
       Array.isArray(questionsData.questions) &&
       questionsData.questions.length > 0
@@ -15,9 +20,10 @@ const useRandomQuestion = (): QandA | null => {
       );
       setRandomQuestion(questionsData.questions[randomIndex]);
     }
+    setLoading(false);
   }, []);
 
-  return randomQuestion;
+  return { question: randomQuestion, isLoading: loading };
 };
 
 export default useRandomQuestion;

@@ -10,3 +10,10 @@ export const MainContent = styled.main`
   flex-grow: 1;
   padding: 1rem;
 `;
+
+export const LoadingIndicator = styled.p`
+  text-align: center;
+  font-style: italic;
+  color: #665;
+  padding: 2rem 0;
+`;
