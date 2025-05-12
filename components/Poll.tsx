@@ -123,7 +123,7 @@ export default function Poll({ qanda }: Props) {
                 <ResultContent>
                   <div>
                     <AnswerText>{answer.text}</AnswerText>
-                    {isSelected && <CheckmarkIcon src={require('../static/check-circle.svg').default} alt="Selected" />}
+                    {isSelected && <CheckmarkIcon src={require('../static/check-circle.svg')} alt="Selected" />}
                   </div>
                   <PercentageText>{percentage.toFixed(1)}% ({answer.votes})</PercentageText>
                 </ResultContent>

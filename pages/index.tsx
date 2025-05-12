@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import { IndexPageWrapper, MainContent } from '../styles/IndexPage.styles';
 import GlobalStyles from '../components/GlobalStyles';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,16 +7,6 @@ import questionsData from '../questions.json';
 import Poll from '../components/Poll';
 import { QandA } from '../types';
 
-const IndexPageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-`;
-
-const MainContent = styled.main`
-  flex-grow: 1;
-  padding: 1rem;
-`;
 
 export default () => {
   const [randomQuestion, setRandomQuestion] = useState<QandA | null>(null);
