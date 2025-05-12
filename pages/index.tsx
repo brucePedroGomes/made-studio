@@ -1,32 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import GlobalStyles from '../components/GlobalStyles';
-import questions from '../questions.json';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import questionsData from '../questions.json';
 import Poll from '../components/Poll';
+import { QandA } from '../types';
 
-const IndexPage = styled.div``;
+const IndexPageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
 
-export default () => (
-  <IndexPage>
-    <GlobalStyles />
-    <h1>Decode React Poll Challenge</h1>
-    <p>
-      Here is some text that is on the page in a paragraph tag. The poll will
-      appear within this context below.
-    </p>
-    <Poll qandas={questions} />
-    <p>
-      Here is the rest of the text on the page. We just have something down here
-      for context to see it in.
-    </p>
-  </IndexPage>
-);
+const MainContent = styled.main`
+  flex-grow: 1;
+  padding: 1rem;
+`;
 
-/**
- * TIPS:
- *
- * You can load the check image like this:
- *
- *    <img src={require('../static/check-circle.svg')} />
- *
- */
+export default () => {
+  const [randomQuestion, setRandomQuestion] = useState<QandA | null>(null);
+
+  useEffect(() => {
+    if (
+      Array.isArray(questionsData.questions) &&
+      questionsData.questions.length > 0
+    ) {
+      const randomIndex = Math.floor(
+        Math.random() * questionsData.questions.length
+      );
+      setRandomQuestion(questionsData.questions[randomIndex]);
+    }
+  }, [questionsData]);
+
+  return (
+    <IndexPageWrapper>
+      <GlobalStyles />
+      <Header />
+      <MainContent>
+        <h1>Welcome to the Poll!</h1>
+        <p>Ready to share your opinion? Answer the question below!</p>
+        {randomQuestion && <Poll qanda={randomQuestion} />}
+        <p>Thanks for participating!</p>
+      </MainContent>
+      <Footer />
+    </IndexPageWrapper>
+  );
+};
