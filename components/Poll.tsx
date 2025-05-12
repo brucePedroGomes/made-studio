@@ -40,30 +40,29 @@ const AnswerItem = styled.li`
   }
 `;
 
-const ResultItem = styled.li<{ isSelected: boolean }>`
+const ResultItem = styled.li`
   padding: 10px 15px;
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-bottom: 10px;
   position: relative;
   overflow: hidden;
-  background-color: ${(props) => (props.isSelected ? '#e6f7ff' : '#fff')};
-  border-color: ${(props) => (props.isSelected ? '#91d5ff' : '#ddd')};
+  background-color: #fff;
+  border-color: #ddd;
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
-const ResultBar = styled.div<{ percentage: number }>`
+const ResultBar = styled.div<{ percentage: number; isMostPopular: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: ${(props) => props.percentage}%;
-  background-color: #e6f7ff;
-  opacity: 0.6;
+  background-color: ${(props) => (props.isMostPopular ? '#00FFFF' : '#DCDCDC')};
   z-index: 1;
-  transition: width 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 `;
 
 const ResultContent = styled.div`
@@ -86,14 +85,16 @@ const PercentageText = styled.span`
 `;
 
 const CheckmarkIcon = styled.img`
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   margin-left: 8px;
   vertical-align: middle;
 `;
 
 export default function Poll({ qanda }: Props) {
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = React.useState<number | null>(null);
+  const [selectedAnswerIndex, setSelectedAnswerIndex] = React.useState<
+    number | null
+  >(null);
 
   const handleAnswerClick = (index: number) => {
     setSelectedAnswerIndex(index);
@@ -103,34 +104,52 @@ export default function Poll({ qanda }: Props) {
     return qanda.answers.reduce((sum, answer) => sum + answer.votes, 0);
   }, [qanda.answers]);
 
+  const mostPopularVotes = React.useMemo(() => {
+    if (!qanda.answers || qanda.answers.length === 0) {
+      return 0;
+    }
+    return Math.max(...qanda.answers.map((answer) => answer.votes));
+  }, [qanda.answers]);
+
   return (
     <PollWrapper>
       <QuestionText>{qanda.question.text}</QuestionText>
       <AnswerList>
-        {selectedAnswerIndex === null ? (
-          qanda.answers.map((answer, index) => (
-            <AnswerItem key={index} onClick={() => handleAnswerClick(index)}>
-              {answer.text}
-            </AnswerItem>
-          ))
-        ) : (
-          qanda.answers.map((answer, index) => {
-            const percentage = totalVotes > 0 ? (answer.votes / totalVotes) * 100 : 0;
-            const isSelected = index === selectedAnswerIndex;
-            return (
-              <ResultItem key={index} isSelected={isSelected}>
-                <ResultBar percentage={percentage} />
-                <ResultContent>
-                  <div>
-                    <AnswerText>{answer.text}</AnswerText>
-                    {isSelected && <CheckmarkIcon src={require('../static/check-circle.svg')} alt="Selected" />}
-                  </div>
-                  <PercentageText>{percentage.toFixed(1)}% ({answer.votes})</PercentageText>
-                </ResultContent>
-              </ResultItem>
-            );
-          })
-        )}
+        {selectedAnswerIndex === null
+          ? qanda.answers.map((answer, index) => (
+              <AnswerItem key={index} onClick={() => handleAnswerClick(index)}>
+                {answer.text}
+              </AnswerItem>
+            ))
+          : qanda.answers.map((answer, index) => {
+              const percentage =
+                totalVotes > 0 ? (answer.votes / totalVotes) * 100 : 0;
+              const isSelected = index === selectedAnswerIndex;
+              const isMostPopular =
+                answer.votes === mostPopularVotes && totalVotes > 0;
+              return (
+                <ResultItem key={index}>
+                  <ResultBar
+                    percentage={percentage}
+                    isMostPopular={isMostPopular}
+                  />
+                  <ResultContent>
+                    <div>
+                      <AnswerText>{answer.text}</AnswerText>
+                      {isSelected && (
+                        <CheckmarkIcon
+                          src={require('../static/check-circle.svg')}
+                          alt="Selected"
+                        />
+                      )}
+                    </div>
+                    <PercentageText>
+                      {percentage.toFixed(1)}% ({answer.votes})
+                    </PercentageText>
+                  </ResultContent>
+                </ResultItem>
+              );
+            })}
       </AnswerList>
     </PollWrapper>
   );
