@@ -1,27 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { IndexPageWrapper, MainContent } from '../styles/IndexPage.styles';
 import GlobalStyles from '../components/GlobalStyles';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import questionsData from '../questions.json';
 import Poll from '../components/Poll';
-import { QandA } from '../types';
-
+import useRandomQuestion from '../hooks/useRandomQuestion';
 
 export default () => {
-  const [randomQuestion, setRandomQuestion] = useState<QandA | null>(null);
-
-  useEffect(() => {
-    if (
-      Array.isArray(questionsData.questions) &&
-      questionsData.questions.length > 0
-    ) {
-      const randomIndex = Math.floor(
-        Math.random() * questionsData.questions.length
-      );
-      setRandomQuestion(questionsData.questions[randomIndex]);
-    }
-  }, [questionsData]);
+  const randomQuestion = useRandomQuestion();
 
   return (
     <IndexPageWrapper>
