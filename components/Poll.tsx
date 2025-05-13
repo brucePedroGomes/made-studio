@@ -1,102 +1,10 @@
 import { useState, useMemo } from 'react';
-import styled from 'styled-components';
 import { QandA } from '../types';
+import * as S from '../styles/Poll.styles';
 
 type Props = {
   qanda: QandA;
 };
-
-const PollWrapper = styled.div`
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-`;
-
-const QuestionText = styled.h2`
-  font-size: 1.2em;
-  margin-bottom: 15px;
-  color: #333;
-`;
-
-const AnswerList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const AnswerItem = styled.li`
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-
-  &:hover {
-    background-color: #f9f9f9;
-  }
-`;
-
-const ResultItem = styled.li`
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  position: relative;
-  overflow: hidden;
-  background-color: #fff;
-  border-color: #ddd;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ResultBar = styled.div<{ percentage: number; isMostPopular: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: ${(props) => props.percentage}%;
-  background-color: ${(props) => (props.isMostPopular ? '#00FFFF' : '#DCDCDC')};
-  z-index: 1;
-  transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
-`;
-
-const ResultContent = styled.div`
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-`;
-
-const AnswerText = styled.span`
-  margin-right: 10px;
-`;
-
-const PercentageText = styled.span`
-  font-weight: bold;
-  color: #555;
-  margin-left: 10px;
-`;
-
-const CheckmarkIcon = styled.img`
-  width: 24px;
-  height: 24px;
-  margin-left: 8px;
-  vertical-align: middle;
-`;
-const TotalVotesText = styled.p`
-  text-align: left;
-  font-size: 0.9em;
-  font-weight: semi-bold;
-  color: #666;
-  margin-top: 15px;
-`;
 
 export default function Poll({ qanda }: Props) {
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
@@ -127,14 +35,14 @@ export default function Poll({ qanda }: Props) {
   }, [optionVotes]);
 
   return (
-    <PollWrapper>
-      <QuestionText>{qanda.question.text}</QuestionText>
-      <AnswerList>
+    <S.PollWrapper>
+      <S.QuestionText>{qanda.question.text}</S.QuestionText>
+      <S.AnswerList>
         {selectedAnswerIndex === null
           ? qanda.answers.map((answer, index) => (
-              <AnswerItem key={index} onClick={() => handleAnswerClick(index)}>
+              <S.AnswerItem key={index} onClick={() => handleAnswerClick(index)}>
                 {answer.text}
-              </AnswerItem>
+              </S.AnswerItem>
             ))
           : qanda.answers.map((answer, index) => {
               const percentage =
@@ -146,30 +54,30 @@ export default function Poll({ qanda }: Props) {
                 optionVotes[index] === mostPopularVotes &&
                 currentTotalVotes > 0;
               return (
-                <ResultItem key={index}>
-                  <ResultBar
+                <S.ResultItem key={index}>
+                  <S.ResultBar
                     percentage={percentage}
                     isMostPopular={isMostPopular}
                   />
-                  <ResultContent>
+                  <S.ResultContent>
                     <div>
-                      <AnswerText>{answer.text}</AnswerText>
+                      <S.AnswerText>{answer.text}</S.AnswerText>
                       {isSelected && (
-                        <CheckmarkIcon
+                        <S.CheckmarkIcon
                           src={require('../static/check-circle.svg')}
                           alt="Selected"
                         />
                       )}
                     </div>
-                    <PercentageText>
+                    <S.PercentageText>
                       {percentage.toFixed(1)}% ({optionVotes[index]})
-                    </PercentageText>
-                  </ResultContent>
-                </ResultItem>
+                    </S.PercentageText>
+                  </S.ResultContent>
+                </S.ResultItem>
               );
             })}
-      </AnswerList>
-      <TotalVotesText>{currentTotalVotes} votes</TotalVotesText>
-    </PollWrapper>
+      </S.AnswerList>
+      <S.TotalVotesText>{currentTotalVotes} votes</S.TotalVotesText>
+    </S.PollWrapper>
   );
 }
