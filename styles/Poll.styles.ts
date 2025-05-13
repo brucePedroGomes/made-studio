@@ -56,7 +56,7 @@ export const ResultBar = styled.div<{ percentage: number; isMostPopular: boolean
   width: ${(props) => props.percentage}%;
   background-color: ${(props) => (props.isMostPopular ? '#00FFFF' : '#DCDCDC')};
   z-index: 1;
-  transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+  transition: width 0.5s ease-in-out;
 `;
 
 export const ResultContent = styled.div`
