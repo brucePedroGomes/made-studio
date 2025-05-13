@@ -11,7 +11,8 @@ export const PollWrapper = styled.div`
 `;
 
 export const QuestionText = styled.h2`
-  font-size: 1.2em;
+  font-size: 1.25rem; 
+  font-weight: 600;
   margin-bottom: 15px;
   color: ${themeColors.textHeading};
 `;
@@ -55,7 +56,7 @@ export const ResultBar = styled.div<{ percentage: number; isMostPopular: boolean
   left: 0;
   height: 100%;
   width: ${(props) => props.percentage}%;
-  background-color: ${(props) => (props.isMostPopular ? themeColors.accentCyan : themeColors.backgroundGray)};
+  background-color: ${(props) => (props.isMostPopular ? themeColors.pollResultBarMostPopular : themeColors.backgroundGray)};
   z-index: 1;
   transition: width 0.5s ease-in-out;
 `;
@@ -74,13 +75,17 @@ export const ResultContent = styled.div`
   }
 `;
 
-export const AnswerText = styled.span`
+export const AnswerText = styled.span<{ isMostPopular?: boolean }>`
+  font-size: 1rem; 
+  font-weight: ${(props) => (props.isMostPopular ? '600' : '500')};
+  color: ${(props) => (props.isMostPopular ? themeColors.pollOptionTextMostPopular : themeColors.pollOptionText)};
   margin-right: 10px;
 `;
 
-export const PercentageText = styled.span`
-  font-weight: bold;
-  color: ${themeColors.textMedium};
+export const PercentageText = styled.span<{ isMostPopular?: boolean }>`
+  font-size: 1rem;
+  font-weight: ${(props) => (props.isMostPopular ? '600' : '500')};
+  color: ${(props) => (props.isMostPopular ? themeColors.pollOptionTextMostPopular : themeColors.pollOptionText)};
   margin-left: 10px;
 `;
 
@@ -92,8 +97,8 @@ export const CheckmarkIcon = styled.img`
 `;
 export const TotalVotesText = styled.p`
   text-align: left;
-  font-size: 0.9em;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500; 
   color: ${themeColors.textLight};
   margin-top: 15px;
 `;

@@ -49,7 +49,10 @@ const Poll: React.FC<Props> = ({ qanda }) => {
       <S.AnswerList>
         {selectedAnswerIndex === null
           ? qanda.answers.map((answer, index) => (
-              <S.AnswerItem key={index} onClick={() => handleAnswerClick(index)}>
+              <S.AnswerItem
+                key={index}
+                onClick={() => handleAnswerClick(index)}
+              >
                 {answer.text}
               </S.AnswerItem>
             ))
@@ -70,12 +73,14 @@ const Poll: React.FC<Props> = ({ qanda }) => {
                   />
                   <S.ResultContent>
                     <div>
-                      <S.AnswerText>{answer.text}</S.AnswerText>
+                      <S.AnswerText isMostPopular={isMostPopular}>
+                        {answer.text}
+                      </S.AnswerText>
                       {isSelected && (
                         <S.CheckmarkIcon src={CheckCircleIcon} alt="Selected" />
                       )}
                     </div>
-                    <S.PercentageText>
+                    <S.PercentageText isMostPopular={isMostPopular}>
                       {actualPercentage.toFixed(1)}% ({optionVotes[index]})
                     </S.PercentageText>
                   </S.ResultContent>

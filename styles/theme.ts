@@ -11,4 +11,7 @@ export const themeColors = {
   textMedium: '#555555',
   textLight: '#737373',
   textPrimary: '#030C30',
+  pollOptionText: '#1F2937',
+  pollOptionTextMostPopular: '#0F172A',
+  pollResultBarMostPopular: '#A5F3FC',
 };
