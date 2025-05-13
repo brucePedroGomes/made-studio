@@ -67,6 +67,11 @@ export const ResultContent = styled.div`
   justify-content: space-between;
   width: 100%;
   align-items: center;
+
+  > div:first-of-type {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 export const AnswerText = styled.span`
@@ -80,10 +85,10 @@ export const PercentageText = styled.span`
 `;
 
 export const CheckmarkIcon = styled.img`
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   margin-left: 8px;
-  vertical-align: middle;
+  flex-shrink: 0;
 `;
 export const TotalVotesText = styled.p`
   text-align: left;
