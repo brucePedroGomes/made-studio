@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { themeColors } from './theme';
 
 export const IndexPageWrapper = styled.div`
   display: flex;
@@ -14,6 +15,6 @@ export const MainContent = styled.main`
 export const LoadingIndicator = styled.p`
   text-align: center;
   font-style: italic;
-  color: #665;
+  color: ${themeColors.textSubtle};
   padding: 2rem 0;
 `;

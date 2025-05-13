@@ -1,7 +1,6 @@
 import React from 'react';
 import * as S from '../styles/Header.styles';
 
-
 const Header: React.FC = () => {
   return (
     <S.HeaderWrapper>

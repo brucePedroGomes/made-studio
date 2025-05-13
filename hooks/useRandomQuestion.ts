@@ -4,13 +4,10 @@ import { QandA } from '../types';
 
 const useRandomQuestion = (): {
   question: QandA | null;
-  isLoading: boolean;
 } => {
   const [randomQuestion, setRandomQuestion] = useState<QandA | null>(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     if (
       Array.isArray(questionsData.questions) &&
       questionsData.questions.length > 0
@@ -20,10 +17,9 @@ const useRandomQuestion = (): {
       );
       setRandomQuestion(questionsData.questions[randomIndex]);
     }
-    setLoading(false);
   }, []);
 
-  return { question: randomQuestion, isLoading: loading };
+  return { question: randomQuestion };
 };
 
 export default useRandomQuestion;

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import CheckCircleIcon from '../static/check-circle.svg';
 import usePollAnimation from '../hooks/usePollAnimation';
 import { QandA } from '../types';
 import * as S from '../styles/Poll.styles';
@@ -71,10 +72,7 @@ const Poll: React.FC<Props> = ({ qanda }) => {
                     <div>
                       <S.AnswerText>{answer.text}</S.AnswerText>
                       {isSelected && (
-                        <S.CheckmarkIcon
-                          src={require('../static/check-circle.svg')}
-                          alt="Selected"
-                        />
+                        <S.CheckmarkIcon src={CheckCircleIcon} alt="Selected" />
                       )}
                     </div>
                     <S.PercentageText>

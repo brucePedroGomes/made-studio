@@ -6,8 +6,10 @@ import Footer from '../components/Footer';
 import Poll from '../components/Poll';
 import useRandomQuestion from '../hooks/useRandomQuestion';
 
-export default () => {
-  const { question, isLoading } = useRandomQuestion();
+import { NextPage } from 'next';
+
+const HomePage: NextPage = () => {
+  const { question } = useRandomQuestion();
 
   return (
     <S.IndexPageWrapper>
@@ -16,14 +18,12 @@ export default () => {
       <S.MainContent>
         <h1>Welcome to the Poll!</h1>
         <p>Ready to share your opinion? Answer the question below!</p>
-        {isLoading ? (
-          <S.LoadingIndicator>Loading question...</S.LoadingIndicator>
-        ) : (
-          question && <Poll qanda={question} />
-        )}
+        {question && <Poll qanda={question} />}
         <p>Thanks for participating!</p>
       </S.MainContent>
       <Footer />
     </S.IndexPageWrapper>
   );
 };
+
+export default HomePage;

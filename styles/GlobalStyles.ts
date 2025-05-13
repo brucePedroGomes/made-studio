@@ -1,13 +1,9 @@
 import { createGlobalStyle } from 'styled-components';
+import { themeColors } from './theme';
 
 export default createGlobalStyle`
-  @import url('https://rsms.me/inter/inter.css');
-
   html {
-    font-family: 'Inter', sans-serif;
-    @supports (font-variation-settings: normal) {
-      font-family: 'Inter var', sans-serif;
-    }
+    font-family: 'Poppins', sans-serif;
   }
 
   body {
@@ -15,6 +11,6 @@ export default createGlobalStyle`
     margin-right: auto;
     margin-left: auto;
     padding: 1em;
-    color: #030C30;
+    color: ${themeColors.textPrimary};
   }
 `;
