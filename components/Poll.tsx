@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
+import usePollAnimation from '../hooks/usePollAnimation';
 import { QandA } from '../types';
 import * as S from '../styles/Poll.styles';
 
@@ -16,9 +17,13 @@ export default function Poll({ qanda }: Props) {
   const [currentTotalVotes, setCurrentTotalVotes] = useState<number>(() =>
     qanda.answers.reduce((sum, answer) => sum + answer.votes, 0)
   );
-  const [displayedPercentages, setDisplayedPercentages] = useState<number[]>(() =>
-    qanda.answers.map(() => 0)
-  );
+
+  const displayedPercentages = usePollAnimation({
+    selectedAnswerIndex,
+    optionVotes,
+    currentTotalVotes,
+    answers: qanda.answers,
+  });
 
   const handleAnswerClick = (index: number) => {
     if (selectedAnswerIndex === null) {
@@ -36,23 +41,6 @@ export default function Poll({ qanda }: Props) {
     }
     return Math.max(...optionVotes);
   }, [optionVotes]);
-
-  useEffect(() => {
-    if (selectedAnswerIndex !== null) {
-      const timerId = setTimeout(() => {
-        const newActualPercentages = qanda.answers.map((_answer, i) => {
-          return currentTotalVotes > 0
-            ? (optionVotes[i] / currentTotalVotes) * 100
-            : 0;
-        });
-        setDisplayedPercentages(newActualPercentages);
-      }, 10);
-
-      return () => clearTimeout(timerId);
-    } else {
-      setDisplayedPercentages(qanda.answers.map(() => 0));
-    }
-  }, [selectedAnswerIndex, optionVotes, currentTotalVotes, qanda.answers]);
 
   return (
     <S.PollWrapper>
