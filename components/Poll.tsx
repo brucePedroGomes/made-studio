@@ -7,7 +7,7 @@ type Props = {
   qanda: QandA;
 };
 
-export default function Poll({ qanda }: Props) {
+const Poll: React.FC<Props> = ({ qanda }) => {
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
     null
   );
@@ -88,4 +88,6 @@ export default function Poll({ qanda }: Props) {
       <S.TotalVotesText>{currentTotalVotes} votes</S.TotalVotesText>
     </S.PollWrapper>
   );
-}
+};
+
+export default Poll;

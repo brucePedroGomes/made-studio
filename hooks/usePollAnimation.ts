@@ -8,12 +8,12 @@ type UsePollAnimationProps = {
   answers: QandA['answers'];
 };
 
-export default function usePollAnimation({
+const usePollAnimation = ({
   selectedAnswerIndex,
   optionVotes,
   currentTotalVotes,
   answers,
-}: UsePollAnimationProps) {
+}: UsePollAnimationProps) => {
   const [displayedPercentages, setDisplayedPercentages] = useState<number[]>(() =>
     answers.map(() => 0)
   );
@@ -36,4 +36,6 @@ export default function usePollAnimation({
   }, [selectedAnswerIndex, optionVotes, currentTotalVotes, answers]);
 
   return displayedPercentages;
-}
+};
+
+export default usePollAnimation;
