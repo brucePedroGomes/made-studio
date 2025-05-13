@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { QandA } from '../types';
 import * as S from '../styles/Poll.styles';
 
@@ -15,6 +15,9 @@ export default function Poll({ qanda }: Props) {
   );
   const [currentTotalVotes, setCurrentTotalVotes] = useState<number>(() =>
     qanda.answers.reduce((sum, answer) => sum + answer.votes, 0)
+  );
+  const [displayedPercentages, setDisplayedPercentages] = useState<number[]>(() =>
+    qanda.answers.map(() => 0)
   );
 
   const handleAnswerClick = (index: number) => {
@@ -34,6 +37,23 @@ export default function Poll({ qanda }: Props) {
     return Math.max(...optionVotes);
   }, [optionVotes]);
 
+  useEffect(() => {
+    if (selectedAnswerIndex !== null) {
+      const timerId = setTimeout(() => {
+        const newActualPercentages = qanda.answers.map((_answer, i) => {
+          return currentTotalVotes > 0
+            ? (optionVotes[i] / currentTotalVotes) * 100
+            : 0;
+        });
+        setDisplayedPercentages(newActualPercentages);
+      }, 10);
+
+      return () => clearTimeout(timerId);
+    } else {
+      setDisplayedPercentages(qanda.answers.map(() => 0));
+    }
+  }, [selectedAnswerIndex, optionVotes, currentTotalVotes, qanda.answers]);
+
   return (
     <S.PollWrapper>
       <S.QuestionText>{qanda.question.text}</S.QuestionText>
@@ -45,7 +65,7 @@ export default function Poll({ qanda }: Props) {
               </S.AnswerItem>
             ))
           : qanda.answers.map((answer, index) => {
-              const percentage =
+              const actualPercentage =
                 currentTotalVotes > 0
                   ? (optionVotes[index] / currentTotalVotes) * 100
                   : 0;
@@ -56,7 +76,7 @@ export default function Poll({ qanda }: Props) {
               return (
                 <S.ResultItem key={index}>
                   <S.ResultBar
-                    percentage={percentage}
+                    percentage={displayedPercentages[index]}
                     isMostPopular={isMostPopular}
                   />
                   <S.ResultContent>
@@ -70,7 +90,7 @@ export default function Poll({ qanda }: Props) {
                       )}
                     </div>
                     <S.PercentageText>
-                      {percentage.toFixed(1)}% ({optionVotes[index]})
+                      {actualPercentage.toFixed(1)}% ({optionVotes[index]})
                     </S.PercentageText>
                   </S.ResultContent>
                 </S.ResultItem>
