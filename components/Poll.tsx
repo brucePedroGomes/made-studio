@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { QandA } from '../types';
 
@@ -90,26 +90,41 @@ const CheckmarkIcon = styled.img`
   margin-left: 8px;
   vertical-align: middle;
 `;
+const TotalVotesText = styled.p`
+  text-align: left;
+  font-size: 0.9em;
+  font-weight: semi-bold;
+  color: #666;
+  margin-top: 15px;
+`;
 
 export default function Poll({ qanda }: Props) {
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = React.useState<
-    number | null
-  >(null);
+  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
+    null
+  );
+  const [optionVotes, setOptionVotes] = useState<number[]>(() =>
+    qanda.answers.map((answer) => answer.votes)
+  );
+  const [currentTotalVotes, setCurrentTotalVotes] = useState<number>(() =>
+    qanda.answers.reduce((sum, answer) => sum + answer.votes, 0)
+  );
 
   const handleAnswerClick = (index: number) => {
-    setSelectedAnswerIndex(index);
+    if (selectedAnswerIndex === null) {
+      setSelectedAnswerIndex(index);
+      const newOptionVotes = [...optionVotes];
+      newOptionVotes[index] += 1;
+      setOptionVotes(newOptionVotes);
+      setCurrentTotalVotes((prevTotalVotes) => prevTotalVotes + 1);
+    }
   };
 
-  const totalVotes = React.useMemo(() => {
-    return qanda.answers.reduce((sum, answer) => sum + answer.votes, 0);
-  }, [qanda.answers]);
-
-  const mostPopularVotes = React.useMemo(() => {
-    if (!qanda.answers || qanda.answers.length === 0) {
+  const mostPopularVotes = useMemo(() => {
+    if (!optionVotes || optionVotes.length === 0) {
       return 0;
     }
-    return Math.max(...qanda.answers.map((answer) => answer.votes));
-  }, [qanda.answers]);
+    return Math.max(...optionVotes);
+  }, [optionVotes]);
 
   return (
     <PollWrapper>
@@ -123,10 +138,13 @@ export default function Poll({ qanda }: Props) {
             ))
           : qanda.answers.map((answer, index) => {
               const percentage =
-                totalVotes > 0 ? (answer.votes / totalVotes) * 100 : 0;
+                currentTotalVotes > 0
+                  ? (optionVotes[index] / currentTotalVotes) * 100
+                  : 0;
               const isSelected = index === selectedAnswerIndex;
               const isMostPopular =
-                answer.votes === mostPopularVotes && totalVotes > 0;
+                optionVotes[index] === mostPopularVotes &&
+                currentTotalVotes > 0;
               return (
                 <ResultItem key={index}>
                   <ResultBar
@@ -144,13 +162,14 @@ export default function Poll({ qanda }: Props) {
                       )}
                     </div>
                     <PercentageText>
-                      {percentage.toFixed(1)}% ({answer.votes})
+                      {percentage.toFixed(1)}% ({optionVotes[index]})
                     </PercentageText>
                   </ResultContent>
                 </ResultItem>
               );
             })}
       </AnswerList>
+      <TotalVotesText>{currentTotalVotes} votes</TotalVotesText>
     </PollWrapper>
   );
 }
