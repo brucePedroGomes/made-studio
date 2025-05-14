@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
-import CheckCircleIcon from '../static/check-circle.svg';
 import usePollAnimation from '../hooks/usePollAnimation';
 import { QandA } from '../types';
 import * as S from '../styles/Poll.styles';
+import AnswerListRenderer from './AnswerListRenderer'; // Import the new component
 
 type Props = {
   qanda: QandA;
@@ -12,16 +12,17 @@ const Poll: React.FC<Props> = ({ qanda }) => {
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
     null
   );
-  const [optionVotes, setOptionVotes] = useState<number[]>(() =>
+  const [votesForEachAnswerOption, setVotesForEachAnswerOption] = useState<number[]>(() =>
     qanda.answers.map((answer) => answer.votes)
   );
-  const [currentTotalVotes, setCurrentTotalVotes] = useState<number>(() =>
-    qanda.answers.reduce((sum, answer) => sum + answer.votes, 0)
-  );
+
+  const currentTotalVotes = useMemo(() => {
+    return votesForEachAnswerOption.reduce((sum, votes) => sum + votes, 0);
+  }, [votesForEachAnswerOption]);
 
   const displayedPercentages = usePollAnimation({
     selectedAnswerIndex,
-    optionVotes,
+    optionVotes: votesForEachAnswerOption,
     currentTotalVotes,
     answers: qanda.answers,
   });
@@ -29,65 +30,31 @@ const Poll: React.FC<Props> = ({ qanda }) => {
   const handleAnswerClick = (index: number) => {
     if (selectedAnswerIndex === null) {
       setSelectedAnswerIndex(index);
-      const newOptionVotes = [...optionVotes];
-      newOptionVotes[index] += 1;
-      setOptionVotes(newOptionVotes);
-      setCurrentTotalVotes((prevTotalVotes) => prevTotalVotes + 1);
+      setVotesForEachAnswerOption((prevVotes) =>
+        prevVotes.map((vote, i) => (i === index ? vote + 1 : vote))
+      );
     }
   };
 
-  const mostPopularVotes = useMemo(() => {
-    if (!optionVotes || optionVotes.length === 0) {
+  const highestVoteCountAmongOptions = useMemo(() => {
+    if (!votesForEachAnswerOption || votesForEachAnswerOption.length === 0) {
       return 0;
     }
-    return Math.max(...optionVotes);
-  }, [optionVotes]);
+    return Math.max(...votesForEachAnswerOption);
+  }, [votesForEachAnswerOption]);
 
   return (
     <S.PollWrapper>
       <S.QuestionText>{qanda.question.text}</S.QuestionText>
-      <S.AnswerList>
-        {selectedAnswerIndex === null
-          ? qanda.answers.map((answer, index) => (
-              <S.AnswerItem
-                key={index}
-                onClick={() => handleAnswerClick(index)}
-              >
-                {answer.text}
-              </S.AnswerItem>
-            ))
-          : qanda.answers.map((answer, index) => {
-              const actualPercentage =
-                currentTotalVotes > 0
-                  ? (optionVotes[index] / currentTotalVotes) * 100
-                  : 0;
-              const isSelected = index === selectedAnswerIndex;
-              const isMostPopular =
-                optionVotes[index] === mostPopularVotes &&
-                currentTotalVotes > 0;
-              return (
-                <S.ResultItem key={index}>
-                  <S.ResultBar
-                    percentage={displayedPercentages[index]}
-                    isMostPopular={isMostPopular}
-                  />
-                  <S.ResultContent>
-                    <div>
-                      <S.AnswerText isMostPopular={isMostPopular}>
-                        {answer.text}
-                      </S.AnswerText>
-                      {isSelected && (
-                        <S.CheckmarkIcon src={CheckCircleIcon} alt="Selected" />
-                      )}
-                    </div>
-                    <S.PercentageText isMostPopular={isMostPopular}>
-                      {actualPercentage.toFixed(1)}% ({optionVotes[index]})
-                    </S.PercentageText>
-                  </S.ResultContent>
-                </S.ResultItem>
-              );
-            })}
-      </S.AnswerList>
+      <AnswerListRenderer
+        answers={qanda.answers}
+        selectedAnswerIndex={selectedAnswerIndex}
+        handleAnswerClick={handleAnswerClick}
+        votesForEachAnswerOption={votesForEachAnswerOption}
+        displayedPercentages={displayedPercentages}
+        currentTotalVotes={currentTotalVotes}
+        highestVoteCountAmongOptions={highestVoteCountAmongOptions}
+      />
       <S.TotalVotesText>{currentTotalVotes} votes</S.TotalVotesText>
     </S.PollWrapper>
   );

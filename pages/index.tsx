@@ -4,12 +4,13 @@ import GlobalStyles from '../styles/GlobalStyles';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Poll from '../components/Poll';
+import PollSkeleton from '../components/PollSkeleton';
 import useRandomQuestion from '../hooks/useRandomQuestion';
 
 import { NextPage } from 'next';
 
 const HomePage: NextPage = () => {
-  const { question } = useRandomQuestion();
+  const { question, loading } = useRandomQuestion();
 
   return (
     <S.IndexPageWrapper>
@@ -18,7 +19,9 @@ const HomePage: NextPage = () => {
       <S.MainContent>
         <h1>Welcome to the Poll!</h1>
         <p>Ready to share your opinion? Answer the question below!</p>
-        {question && <Poll qanda={question} />}
+        {loading && <PollSkeleton />}
+        {!loading && question && <Poll qanda={question} />}
+        {!loading && !question && <p>No question available at the moment.</p>}
         <p>Thanks for participating!</p>
       </S.MainContent>
       <Footer />

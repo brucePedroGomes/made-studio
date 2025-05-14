@@ -90,8 +90,8 @@ export const PercentageText = styled.span<{ isMostPopular?: boolean }>`
 `;
 
 export const CheckmarkIcon = styled.img`
-  width: 32px;
-  height: 32px;
+  width: 22px;
+  height: 22px;
   margin-left: 8px;
   flex-shrink: 0;
 `;
